@@ -1,8 +1,8 @@
 # SignalR
-dotnet new razor --auth Individual
-dotnet add package Microsoft.AspNetCore.SignalR --version 1.0.4
+    dotnet new razor --auth Individual
+    dotnet add package Microsoft.AspNetCore.SignalR --version 1.0.4
 
-Add a SignalR Hub
+## Add a SignalR Hub
 
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.SignalR;
