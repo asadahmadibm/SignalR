@@ -1,4 +1,4 @@
-# SignalR
+# SignalR & Quartz
     dotnet new razor --auth Individual
     dotnet add package Microsoft.AspNetCore.SignalR --version 1.0.4
 
@@ -123,7 +123,61 @@
             messageBox.value = '';
         });
     </script>
-    
+
+## Add Quartz 
+
+1-add nuget Quartz
+2-add nuget Quartz.Extensions.Hosting
+
+
+3- builder.Services.AddQuartz(q =>
+{
+    q.UseMicrosoftDependencyInjectionJobFactory();
+
+    var conconcurrentJobKey = new JobKey("ConconcurrentJob");
+    q.AddJob<ConconcurrentJob>(opts => opts.WithIdentity(conconcurrentJobKey));
+    q.AddTrigger(opts => opts
+        .ForJob(conconcurrentJobKey)
+        .WithIdentity("ConconcurrentJob-trigger")
+        .WithSimpleSchedule(x => x
+            .WithIntervalInSeconds(5)
+            .RepeatForever()));
+
+});
+builder.Services.AddQuartzHostedService(
+    q => q.WaitForJobsToComplete = true);
+	
+	
+4- 	public class ConconcurrentJob : IJob
+    {
+        private readonly ILogger<ConconcurrentJob> _logger;
+        private static int _counter = 0;
+        private readonly IHubContext<Chat> _hubContext;
+
+        public ConconcurrentJob(ILogger<ConconcurrentJob> logger,
+            IHubContext<Chat> hubContext)
+        {
+            _logger = logger;
+            _hubContext = hubContext;
+        }
+
+        public async Task Execute(IJobExecutionContext context)
+        {
+            var count = _counter++;
+
+            var beginMessage = $"Conconcurrent Job BEGIN {count} {DateTime.UtcNow}";
+            await _hubContext.Clients.All.SendAsync("ConcurrentJobs", beginMessage);
+            _logger.LogInformation("{beginMessage}", beginMessage);
+
+            Thread.Sleep(2000);
+
+            var endMessage = $"Conconcurrent Job END {count} {DateTime.UtcNow}";
+            await _hubContext.Clients.All.SendAsync("ConcurrentJobs", endMessage);
+            _logger.LogInformation("{endMessage}", endMessage);
+        }
+    }
+	
+	    
 
     
 
