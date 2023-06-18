@@ -3,20 +3,7 @@
     dotnet add package Microsoft.AspNetCore.SignalR --version 1.0.4
 
 ## Add a SignalR Hub
-
-    using System.Threading.Tasks;
-    using Microsoft.AspNetCore.SignalR;
-    namespace SignalRChat.Hubs
-    {
-        public class Chat : Hub
-        {
-            public async Task SendMessage(string message)
-            {
-                await Clients.All.SendAsync("newMessage", "anonymous", message);
-            }
-        }
-    }
-
+    1- Add In Startup
     public void ConfigureServices (IServiceCollection services)
     {
         // ...
@@ -35,6 +22,63 @@
         });
     }
     
+    2- Add in Class
+    
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.SignalR;
+    namespace SignalRChat.Hubs
+    {
+        public class Chat : Hub
+        {
+            public async Task SendMessage(string message)
+            {
+                await Clients.All.SendAsync("newMessage", "anonymous", message);
+            }
+        }
+    }
+    and  in other class in cs
+    private readonly IHubContext<Chat> _hubContext;
+
+        public changeJob(ILogger<changeJob> logger,
+            IHubContext<Chat> hubContext)
+        {
+            _logger = logger;
+            _hubContext = hubContext;
+        }
+    
+    _hubContext.Clients.All.SendAsync("ConcurrentJobs", "beginMessage");
+
+    3- Add in JavaScript code 
+
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/chat")
+        .configureLogging(signalR.LogLevel.Information)
+        .build();
+    
+    
+    async function start() {
+        try {
+            await connection.start();
+            console.log("SignalR Connected.");
+        } catch (err) {
+            console.log(err);
+            setTimeout(start, 5000);
+        }
+    };
+    
+    connection.onclose(async () => {
+        await start();
+    });
+    
+    start();
+    
+    connection.on("ConcurrentJobs", function (message) {
+        var li = document.createElement("li");
+        document.getElementById("concurrentJobs").appendChild(li);
+        li.textContent = `${message}`;
+    });
+
+   example :
     
     Pages/Index.cshtml
     
@@ -80,8 +124,8 @@
         });
     </script>
     
+
     
-    
-    Microsoft.AspNetCore.Authentication.JwtBearer 
+
 
 
