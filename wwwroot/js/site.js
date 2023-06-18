@@ -3,7 +3,7 @@
 
 // Write your JavaScript code.
 const connection = new signalR.HubConnectionBuilder()
-    .withUrl("/chat")
+    .withUrl("http://signalrmvc.tnlink.ir/chat")
     .configureLogging(signalR.LogLevel.Information)
     .build();
 

@@ -6,7 +6,7 @@
 <script src="https://unpkg.com/@@aspnet/signalr@@1.0.0-rc1-final/dist/browser/signalr.js"></script>
 
 <div class="text-center">
-    <p> RealTime Chat By Mvc<p>
+    <p> 1- RealTime Chat By Mvc<p>
     <p> <a href="https://github.com/asadahmadibm/SignalR">راهنماو سورس ساخت چت با سیگنال ار در دات نت </a></p>
 </div>
 <div class="signalr-demo">
@@ -18,17 +18,7 @@
 </div>
 <hr />
 <div class="text-center">
-    <p> RealTime Send To All with Quartz in 5 second <p>
-</div>
-<div class="container">
-    <div class="row">
-        <div class="col-6">
-            <ul style="overflow: scroll;height:300px" id="concurrentJobs"></ul>
-        </div>
-        <div class="col-6">
-            <ul style="overflow: scroll;height:300px" id="nonConcurrentJobs"></ul>
-        </div>
-    </div>
+    <p> 2- RealTime Send To All When Change Data <p>
 </div>
 <span id="span1" style="background-color:#337AB7;padding:2px;"> <b>225</b></span>
 <span id="span2" style="background-color:#5CB85C;padding:2px;"><b>225</b></span>
@@ -36,6 +26,22 @@
 <span id="span4" style="background-color:#F0AD4E;padding:2px;"><b>225</b></span>
 <span id="span5" style="background-color:#D9534F;padding:2px;"><b>225</b></span>
 <span id="span6" style="background-color:#777777;padding:2px;"><b>225</b></span>
+<hr />
+<div class="text-center">
+    <p> 3- RealTime Send To All with Quartz in 5 second <p>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-6">
+            <ul style="overflow: scroll;height:200px" id="concurrentJobs"></ul>
+        </div>
+        <div class="col-6">
+            <ul style="overflow: scroll;height:200px" id="nonConcurrentJobs"></ul>
+        </div>
+    </div>
+</div>
+
+
 <script>
     const messageForm =  document.getElementById('message-form');
     const messageBox = document.getElementById('message-box');
