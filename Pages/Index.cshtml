@@ -13,9 +13,29 @@
     <form id="message-form">
        <p>Send Message</p> <input type="text" id="message-box"/>
     </form>
-    <hr />
+
     <ul id="messages"></ul>
 </div>
+<hr />
+<div class="text-center">
+    <p> RealTime Send To All with Quartz in 5 second <p>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-6">
+            <ul style="overflow: scroll;height:300px" id="concurrentJobs"></ul>
+        </div>
+        <div class="col-6">
+            <ul style="overflow: scroll;height:300px" id="nonConcurrentJobs"></ul>
+        </div>
+    </div>
+</div>
+<span id="span1" style="background-color:#337AB7;padding:2px;"> <b>225</b></span>
+<span id="span2" style="background-color:#5CB85C;padding:2px;"><b>225</b></span>
+<span id="span3" style="background-color:#5BC0DE;padding:2px;"> <b>225</b></span>
+<span id="span4" style="background-color:#F0AD4E;padding:2px;"><b>225</b></span>
+<span id="span5" style="background-color:#D9534F;padding:2px;"><b>225</b></span>
+<span id="span6" style="background-color:#777777;padding:2px;"><b>225</b></span>
 <script>
     const messageForm =  document.getElementById('message-form');
     const messageBox = document.getElementById('message-box');
@@ -29,28 +49,7 @@
    //     .configureLogging(signalR.LogLevel.Information)
    //     .build();
 
-    const connection = new signalR.HubConnectionBuilder()
-        .withUrl("/chat")
-        .configureLogging(signalR.LogLevel.Information)
-        .build();
-        
-    connection.on('newMessage', (sender, messageText) => {
-        console.log(`${sender}:${messageText}`);
-        
-        const newMessage = document.createElement('li');
-        newMessage.appendChild(document.createTextNode(`${sender}:${messageText}`));
-        messages.appendChild(newMessage);
-    });
-     connection.start()
-        .then(() => console.log('connected!'))
-        .catch(console.error);
-        
-    messageForm.addEventListener('submit', ev => {
-        ev.preventDefault();
-        const message = messageBox.value;
-        connection.invoke('SendMessage', message);
-        messageBox.value = '';
-    });
+   
 
     function getToken() {
         const xhr = new XMLHttpRequest();

@@ -6,11 +6,24 @@ namespace SignalRChat.Hubs
 {
     //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     //[Authorize]
-        public class Chat : Hub
+    public class Chat : Hub
     {
         public async Task SendMessage(string message)
         {
             await Clients.All.SendAsync("newMessage", Context.User?.Identity?.Name ?? "Unknown", message);
         }
+
+
+        public Task SendConcurrentJobsMessage(string message)
+        {
+            return Clients.All.SendAsync("ConcurrentJobs", message);
+        }
+
+        public Task SendNonConcurrentJobsMessage(string message)
+        {
+            return Clients.All.SendAsync("NonConcurrentJobs", message);
+        }
+
+
     }
 }

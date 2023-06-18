@@ -1,10 +1,9 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
+using Quartz;
 using SignalRChat.Data;
 using SignalRChat.Hubs;
-using System.Security.Claims;
+using SignalRChat.QuartzServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +17,41 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddRazorPages();
 builder.Services.AddSignalR();
+builder.Services.AddQuartz(q =>
+{
+    q.UseMicrosoftDependencyInjectionJobFactory();
+
+    var conconcurrentJobKey = new JobKey("ConconcurrentJob");
+    q.AddJob<ConconcurrentJob>(opts => opts.WithIdentity(conconcurrentJobKey));
+    q.AddTrigger(opts => opts
+        .ForJob(conconcurrentJobKey)
+        .WithIdentity("ConconcurrentJob-trigger")
+        .WithSimpleSchedule(x => x
+            .WithIntervalInSeconds(3)
+            .RepeatForever()));
+
+    var nonConconcurrentJobKey = new JobKey("NonConconcurrentJob");
+    q.AddJob<NonConconcurrentJob>(opts => opts.WithIdentity(nonConconcurrentJobKey));
+    q.AddTrigger(opts => opts
+        .ForJob(nonConconcurrentJobKey)
+        .WithIdentity("NonConconcurrentJob-trigger")
+        .WithSimpleSchedule(x => x
+            .WithIntervalInSeconds(3)
+            .RepeatForever()));
+
+    var ChangeJobKey = new JobKey("changeJob");
+    q.AddJob<changeJob>(opts => opts.WithIdentity(ChangeJobKey));
+    q.AddTrigger(opts => opts
+        .ForJob(ChangeJobKey)
+        .WithIdentity("ChangeJobKey-trigger")
+        .WithSimpleSchedule(x => x
+            .WithIntervalInSeconds(1)
+            .RepeatForever()));
+
+});
+builder.Services.AddQuartzHostedService(
+    q => q.WaitForJobsToComplete = true);
+
 //var key = new SymmetricSecurityKey(System.Text.Encoding.ASCII.GetBytes(builder.Configuration["JwtKey"]));
 //builder.Services.AddAuthentication().AddJwtBearer(options =>
 //{
